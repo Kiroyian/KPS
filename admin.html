@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Karero Comprehensive School</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<header class="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <a href="index.html">Karero Comprehensive School</a>
+    </div>
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="courses.html" target="_blank" rel="noopener noreferrer">Courses</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="dropdown">
+          <button type="button" class="dropdown-toggle">Resources</button>
+          <ul class="dropdown-menu">
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="downloads.html" target="_blank" rel="noopener noreferrer">Downloads</a></li>
+            <li><a href="notices.html" target="_blank" rel="noopener noreferrer">Notices</a></li>
+          </ul>
+        </li>
+        <li><a href="registration.html" class="btn-register" data-auth-open="register">Register</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container admin-page">
+  <section class="admin-login-panel" id="adminLoginPanel">
+    <h1>Admin Sign In</h1>
+    <p>Enter the admin password to access student download tracking, notices, and class timetables.</p>
+    <p class="page-intro">If no admin credentials exist yet, default credentials are seeded automatically: <strong>Fred</strong> / <strong>1234</strong>.</p>
+    <form id="adminLoginForm" class="admin-form">
+      <div class="input-group">
+        <input type="text" id="adminUsername" placeholder="Admin username" required>
+      </div>
+      <div class="input-group password-box">
+        <input type="password" id="adminPassword" placeholder="Admin password" required>
+      </div>
+      <button type="submit" class="btn btn-secondary">Sign In</button>
+      <p class="page-intro">Use the admin dashboard to mark form submissions, update notices, and manage teacher timetables.</p>
+    </form>
+  </section>
+
+  <section class="admin-dashboard hidden" id="adminDashboard">
+    <div class="admin-top-bar">
+      <div>
+        <h1>School Admin Dashboard</h1>
+        <p>Admin tasks: view registered students who downloaded application forms, track office submissions, update notices, and manage timetables.</p>
+      </div>
+      <button id="adminLogout" class="btn">Logout</button>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="admin-card admin-panel">
+        <h2>Student Download Requests</h2>
+        <p>Registered students who downloaded or opened school application forms are listed below.</p>
+        <div class="table-responsive">
+          <table class="admin-table" id="downloadsTable">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Class</th>
+                <th>Email</th>
+                <th>Form</th>
+                <th>Action</th>
+                <th>Submitted</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-card admin-panel admin-summary-card">
+        <h2>School Notices</h2>
+        <p>Edit or publish announcements from a sleek popup workspace.</p>
+        <div class="card-actions">
+          <button id="openNoticesModal" class="btn btn-secondary">Open Notices</button>
+        </div>
+      </div>
+
+      <div class="admin-card admin-panel admin-summary-card">
+        <h2>Class Timetable Manager</h2>
+        <p>Build or edit schedules in a focused popup without clutter.</p>
+        <div class="card-actions">
+          <button id="openTimetableModal" class="btn btn-secondary">Open Timetable</button>
+        </div>
+      </div>
+
+      <div class="admin-card admin-panel admin-summary-card">
+        <h2>Feedback & Requests</h2>
+        <p>Review student and parent messages from the contact form.</p>
+        <div class="card-actions">
+          <button id="openFeedbackModal" class="btn btn-secondary">Open Feedback</button>
+        </div>
+      </div>
+
+      <div class="admin-card admin-panel admin-summary-card">
+        <h2>Teacher Duty Schedule</h2>
+        <p>View teacher assignments in a dedicated popup table.</p>
+        <div class="card-actions">
+          <button id="openScheduleModal" class="btn btn-secondary">View Duty Schedule</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-modal hidden" id="noticeModal" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h2>School Notices</h2>
+            <p>Publish, edit, or delete notices from this panel.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="noticeModal">×</button>
+        </div>
+        <form id="noticeForm" class="admin-notice-form modal-form">
+          <input type="text" id="noticeTitle" placeholder="Notice title" required>
+          <input type="date" id="noticeDate" required>
+          <textarea id="noticeMessage" placeholder="Notice details" required></textarea>
+          <div class="modal-form-actions">
+            <button type="submit" class="btn btn-secondary">Publish Notice</button>
+            <button type="button" id="cancelNoticeEdit" class="btn btn-outline">Cancel Edit</button>
+          </div>
+        </form>
+        <div class="notice-preview" id="adminNoticePreview"></div>
+      </div>
+    </div>
+
+    <div class="admin-modal hidden" id="timetableModal" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h2>Class Timetable Manager</h2>
+            <p>Add or update timetable entries for each grade and day.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="timetableModal">×</button>
+        </div>
+        <form id="scheduleForm" class="admin-schedule-form modal-form">
+          <select id="scheduleGrade" required>
+            <option value="">Select class or grade</option>
+            <option>PP1</option>
+            <option>PP2</option>
+            <option>Grade 1</option>
+            <option>Grade 2</option>
+            <option>Grade 3</option>
+            <option>Grade 4</option>
+            <option>Grade 5</option>
+            <option>Grade 6</option>
+            <option>Grade 7</option>
+            <option>Grade 8</option>
+            <option>Grade 9</option>
+            <option>Grade 10</option>
+          </select>
+          <input type="text" id="scheduleTeacher" placeholder="Teacher name" required>
+          <input type="text" id="scheduleSubjects" placeholder="Subjects (comma separated)" required>
+          <select id="scheduleDay" required>
+            <option value="">Select day</option>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+          </select>
+          <input type="text" id="scheduleDuty" placeholder="Teacher on duty / classroom" required>
+          <div class="modal-form-actions">
+            <button type="submit" class="btn btn-secondary">Save Timetable Entry</button>
+          </div>
+        </form>
+        <div id="schedulePreview"></div>
+      </div>
+    </div>
+
+    <div class="admin-modal hidden" id="feedbackModal" aria-hidden="true">
+      <div class="modal-card modal-card--wide">
+        <div class="modal-header">
+          <div>
+            <h2>Feedback & Requests</h2>
+            <p>Review and respond to student or parent messages from the contact form.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="feedbackModal">×</button>
+        </div>
+        <div id="adminFeedbackList" class="feedback-list"></div>
+      </div>
+    </div>
+
+    <div class="admin-modal hidden" id="scheduleModal" aria-hidden="true">
+      <div class="modal-card modal-card--wide">
+        <div class="modal-header">
+          <div>
+            <h2>Teacher Duty Schedule</h2>
+            <p>Review daily assignments in a clean, wider table view.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="scheduleModal">×</button>
+        </div>
+        <div class="table-responsive">
+          <table class="admin-table" id="teacherScheduleTable">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Class</th>
+                <th>Teacher</th>
+                <th>Subjects</th>
+                <th>Duty</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+

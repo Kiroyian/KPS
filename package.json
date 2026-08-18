@@ -1,0 +1,12 @@
+{
+  "name": "kps-admin-test",
+  "version": "1.0.0",
+  "description": "Local test harness to verify admin login in KPS site",
+  "private": true,
+  "scripts": {
+    "test-admin": "node tests/test-admin-login.js"
+  },
+  "devDependencies": {
+    "puppeteer": "^20.9.0"
+  }
+}

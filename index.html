@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karero Pr & Jnr School</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="js/auth.js"></script>
+</head>
+<body>
+<header class="navbar">
+  
+  <div class="nav-container">
+    <div class="logo">
+      <a href="index.html">Karero Comprehsive School</a>
+    </div>
+
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="courses.html" target="_blank" rel="noopener noreferrer">Courses</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li class="dropdown">
+          <button type="button" class="dropdown-toggle">Resources</button>
+          <ul class="dropdown-menu">
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="downloads.html" target="_blank" rel="noopener noreferrer">Downloads</a></li>
+            <li><a href="notices.html" target="_blank" rel="noopener noreferrer">Notices</a></li>
+          </ul>
+        </li>
+        <li><a href="registration.html" class="btn-register" data-auth-open="register">Register</a></li>
+
+      </ul>
+    </nav>
+
+  </div>
+
+</header>
+
+<section class="hero">
+
+  <div class="hero-content">
+
+    <h1>Welcome to Karero Comprehensive School</h1>
+
+    <p>
+      Providing quality education and nurturing young minds
+      in Namanga, Kajiado County, Kenya.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="about.html" class="btn">Learn More</a>
+      <a href="registration.html" class="btn btn-secondary" data-auth-open="register">Apply Now</a>
+      <a href="downloads.html" class="btn">Download Forms</a>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ABOUT PREVIEW -->
+<section class="about-preview">
+
+  <div class="container">
+
+    <h2>About Our School</h2>
+
+    <p>
+      Karero Primary School is a public institution located in
+      Namanga Town, Kajiado County, Kenya. We provide quality
+      education from early childhood through primary and junior
+      secondary levels.
+    </p>
+
+    <a href="about.html" class="btn">Read More</a>
+
+  </div>
+
+</section>
+
+
+<!-- COURSES SECTION -->
+<section class="courses">
+
+  <div class="container">
+
+    <h2>Courses Offered</h2>
+
+    <div class="course-grid">
+
+      <div class="course-card">
+        <h3>PP1 & PP2</h3>
+        <p>Early childhood education that builds a strong learning foundation.</p>
+      </div>
+
+      <div class="course-card">
+        <h3>Primary Education</h3>
+        <p>Competency Based Curriculum designed for academic excellence.</p>
+      </div>
+
+      <div class="course-card">
+        <h3>Junior Secondary</h3>
+        <p>Preparing learners for higher education and future careers.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- WHY CHOOSE US -->
+<section class="features">
+
+  <div class="container">
+
+    <h2>Why Choose Karero Primary School</h2>
+
+    <div class="feature-grid">
+
+      <div class="feature">
+        <h3>Qualified Teachers</h3>
+        <p>Our teachers are well trained and committed to student success.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Quality Education</h3>
+        <p>We provide a strong academic foundation for all learners.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Safe Environment</h3>
+        <p>A supportive and secure environment for children to learn and grow.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- MODAL LOGIN SYSTEM -->
+
+<div class="auth-modal" id="authModal">
+
+<div class="auth-overlay" onclick="closeAuth()"></div>
+
+<div class="auth-box">
+
+<span class="close-auth" id="closeAuth">&times;</span>
+
+<div class="auth-switch">
+<button type="button" class="active" id="loginTab">Login</button>
+<button type="button" id="registerTab">Register</button>
+</div>
+
+
+<!-- LOGIN FORM -->
+
+<form id="loginForm" class="auth-form">
+
+<h2>Welcome Back</h2>
+
+<div class="input-group">
+<input type="email" placeholder="Email" required>
+</div>
+
+<div class="input-group password-box">
+<input type="password" id="loginPassword" placeholder="Password" required>
+<span class="toggle-password" onclick="togglePassword('loginPassword')">👁</span>
+</div>
+
+<div class="auth-options">
+<label><input type="checkbox"> Remember me</label>
+<a href="reset-password.html">Forgot password?</a>
+</div>
+
+<button type="submit" class="auth-btn">Login</button>
+
+</form>
+
+
+<!-- REGISTER FORM -->
+
+<form id="registerForm" class="auth-form hidden">
+
+<h2>Create Account</h2>
+
+<div class="input-group">
+<input type="text" placeholder="First Name" required>
+</div>
+
+<div class="input-group">
+<input type="text" placeholder="Second Name" required>
+</div>
+
+<div class="input-group">
+<input type="email" placeholder="Email" required>
+</div>
+
+<div class="input-group password-box">
+<input type="password" id="registerPassword" placeholder="Password" required>
+<span class="toggle-password" onclick="togglePassword('registerPassword')">👁</span>
+</div>
+
+<p class="terms-text">
+  By registering into our system, you agreed to our
+  <a href="terms-conditions.html" class="terms-link">"terms and conditions"</a>.
+</p>
+
+<button type="submit" class="auth-btn">Create Account</button>
+
+</form>
+
+</div>
+
+</div>
+
+<footer>
+
+  <p>&copy; 2026 Karero Primary School. All Rights Reserved.</p>
+  <p><a href="terms-conditions.html">Terms and Conditions</a> | <a href="downloads.html" target="_blank" rel="noopener noreferrer">Downloads</a></p>
+  <p>Design by <a href="frede networks.html">Frede Networks</a></p>
+</footer>
+<script src="js/script.js"></script>
+</body>
+</html>
+
