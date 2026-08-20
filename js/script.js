@@ -543,8 +543,10 @@ async function initAdminPage() {
         await setDefaultAdminCredentials();
       }
 
+      const currentUserHash = localStorage.getItem(STORAGE_ADMIN_USER_HASH);
+      const currentPassHash = localStorage.getItem(STORAGE_ADMIN_PASS_HASH);
       const [userHash, passHash] = await Promise.all([hashString(username), hashString(password)]);
-      if (userHash === storedUserHash && passHash === storedPassHash) {
+      if (userHash === currentUserHash && passHash === currentPassHash) {
         sessionStorage.setItem(STORAGE_ADMIN_AUTH, 'true');
         showAdminDashboard();
         return;
@@ -776,12 +778,6 @@ function initPage() {
   }
   if (page === 'downloads.html') {
     initDownloadsPage();
-  }
-  if (page === 'notices.html') {
-    initNoticesPage();
-  }
-  if (page === 'admin.html') {
-    initAdminPage();
   }
 }
 
