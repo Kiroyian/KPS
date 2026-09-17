@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Karero Comprehensive School</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <a href="index.html">Karero Comprehensive School</a>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html" target="_blank" rel="noopener noreferrer">Courses</a></li>
+                <li class="dropdown">
+                    <button type="button" class="dropdown-toggle">Resources</button>
+                    <ul class="dropdown-menu">
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="downloads.html" target="_blank" rel="noopener noreferrer">Downloads</a></li>
+                        <li><a href="notices.html" target="_blank" rel="noopener noreferrer">Notices</a></li>
+                    </ul>
+                </li>
+                <li><a href="registration.html" class="btn-register">Register</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="contact-page">
+    <section class="contact-hero">
+        <div class="contact-hero-content">
+            <p class="section-kicker">We Are Here To Help</p>
+            <h1>Contact Karero Comprehensive School</h1>
+            <p>
+                Reach the school office for admissions, feedback, general support, or any request
+                about learning at Karero Comprehensive School.
+            </p>
+        </div>
+    </section>
+
+    <section class="container contact-panel">
+        <div class="contact-method-grid">
+            <article class="contact-method-card">
+                <span class="contact-method-icon">@</span>
+                <h2>Email Us</h2>
+                <p>Send official questions, requests, and documents to the school email.</p>
+                <span class="contact-value">fr*******@gmail.com</span>
+            </article>
+
+            <article class="contact-method-card">
+                <span class="contact-method-icon">Tel</span>
+                <h2>School Telephone Numbers</h2>
+                <p>Call during school working hours for quick assistance.</p>
+                <span class="contact-value">Office: +254 718 647 xxx</span>
+                <span class="contact-value">Admissions: +254 7xx xxx xxx</span>
+            </article>
+
+            <article class="contact-method-card contact-action-card">
+                <span class="contact-method-icon">Form</span>
+                <h2>Feedback, Help or Request</h2>
+                <p>Open the form, fill in every field, and submit your message to the school.</p>
+                <button type="button" class="btn contact-open-btn" id="openContactForm">Open Contact Form</button>
+            </article>
+        </div>
+
+        <div class="contact-location-card">
+            <div>
+                <p class="section-kicker">Location</p>
+                <h2>Visit the School Office</h2>
+                <p>Karero Primary School is located in Namanga, Kajiado County, Kenya.</p>
+            </div>
+            <a class="btn btn-secondary" href="downloads.html">Download Forms</a>
+        </div>
+    </section>
+</main>
+
+<div class="contact-modal" id="contactModal" aria-hidden="true">
+    <div class="contact-modal-overlay" data-contact-close></div>
+
+    <div class="contact-modal-box" role="dialog" aria-modal="true" aria-labelledby="contactFormTitle">
+        <button type="button" class="contact-modal-close" data-contact-close aria-label="Close contact form">&times;</button>
+
+        <div class="contact-modal-heading">
+            <p class="section-kicker">Send a Message</p>
+            <h2 id="contactFormTitle">Feedback, Help or Request Form</h2>
+            <p>All fields are required before submitting your message.</p>
+        </div>
+
+        <form class="contact-popup-form" id="contactForm">
+            <label for="contactName">Full Name</label>
+            <input type="text" id="contactName" name="name" placeholder="Enter your full name" required>
+
+            <label for="contactEmail">Email Address</label>
+            <input type="email" id="contactEmail" name="email" placeholder="Enter your email address" required>
+
+            <label for="contactPhone">Phone Number</label>
+            <input type="tel" id="contactPhone" name="phone" placeholder="Enter your phone number" required>
+
+            <label for="contactTopic">Reason for Contact</label>
+            <select id="contactTopic" name="topic" required>
+                <option value="">Select one option</option>
+                <option value="help">Help</option>
+                <option value="feedback">Feedback</option>
+                <option value="request">Request</option>
+                <option value="admissions">Admissions inquiry</option>
+            </select>
+
+            <label for="contactMessage">Message</label>
+            <textarea id="contactMessage" name="message" rows="5" placeholder="Write your message here" required></textarea>
+
+            <button type="submit" class="btn contact-submit-btn">Submit Message</button>
+            <p class="contact-form-note" id="contactFormNote" aria-live="polite"></p>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 Karero Comprehensive School. All Rights Reserved.</p>
+</footer>
+<script src="js/script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloads - Karero Comprehensive School</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <a href="index.html">Karero Comprehensive School</a>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html" target="_blank" rel="noopener noreferrer">Courses</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li class="dropdown">
+                    <button type="button" class="dropdown-toggle">Resources</button>
+                    <ul class="dropdown-menu">
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="downloads.html" target="_blank" rel="noopener noreferrer">Downloads</a></li>
+                        <li><a href="notices.html" target="_blank" rel="noopener noreferrer">Notices</a></li>
+                    </ul>
+                </li>
+                <li><a href="registration.html" class="btn-register">Register</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="container downloads-page">
+        <h1>School Downloads</h1>
+        <p class="page-intro">
+            Open or download the application forms needed to apply for admission at Karero Comprehensive School.
+        </p>
+
+        <div class="download-tracker">
+            <h2>Track Student Form Downloads</h2>
+            <p>Enter student details before opening or downloading the application form so the admin dashboard can track when the form was requested and whether it was submitted to the office.</p>
+            <form id="studentDownloadForm">
+                <div class="download-form-grid">
+                    <input type="text" id="studentName" placeholder="Student Name" required>
+                    <input type="text" id="studentClass" placeholder="Class / Grade" required>
+                    <input type="email" id="studentEmail" placeholder="Parent Email (optional)">
+                </div>
+                <button type="submit" class="btn btn-secondary">Save Student Details</button>
+                <p id="downloadFormMessage" class="page-intro"></p>
+            </form>
+        </div>
+
+        <div class="download-grid">
+            <article class="download-card">
+                <h2>Admission Application Form</h2>
+                <p>Use this form to apply for PP1, PP2, primary, or junior secondary admission.</p>
+                <div class="download-actions">
+                    <a class="btn btn-secondary" href="documents/karero-application-form.html" target="_blank" data-track-action="open" data-form-name="Admission Application Form">Open</a>
+                    <a class="btn" href="documents/karero-application-form.html" download data-track-action="download" data-form-name="Admission Application Form">Download</a>
+                </div>
+            </article>
+
+            <article class="download-card">
+                <h2>Admission Requirements</h2>
+                <p>Review the documents and details needed before submitting an application.</p>
+                <div class="download-actions">
+                    <a class="btn btn-secondary" href="documents/admission-requirements.html" target="_blank" data-track-action="open" data-form-name="Admission Requirements">Open</a>
+                    <a class="btn" href="documents/admission-requirements.html" download data-track-action="download" data-form-name="Admission Requirements">Download</a>
+                </div>
+            </article>
+        </div>
+
+        <p class="download-help">
+            After completing the form, submit it to the school office or contact the school for guidance.
+        </p>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2026 Karero Comprehensive School. All Rights Reserved.</p>
+</footer>
+<script src="js/script.js"></script>
+</body>
+</html>
+

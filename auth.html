@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karero Primary School - Login / Register</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<!-- Optional content behind modal -->
+<div class="auth-page-background">
+  <h1 style="text-align:center; margin-top:100px;">Welcome to Karero Primary School</h1>
+  <p style="text-align:center;">Please login or register to continue</p>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal active" id="authModal">
+  <div class="auth-overlay" onclick="closeAuth()"></div>
+  <div class="auth-box">
+    <span class="close-auth" onclick="closeAuth()">&times;</span>
+
+    <!-- Tab Buttons -->
+    <div class="auth-switch">
+      <button class="active" id="loginTab">Login</button>
+      <button id="registerTab">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="auth-form">
+      <h2>Welcome Back</h2>
+      <div class="input-group">
+        <input type="email" placeholder="Email" required>
+      </div>
+      <div class="input-group password-box">
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <span class="toggle-password" onclick="togglePassword('loginPassword')">👁</span>
+      </div>
+      <div class="auth-options">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="reset-password.html">Forgot password?</a>
+      </div>
+      <button class="auth-btn">Login</button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="auth-form hidden">
+      <h2>Create Account</h2>
+      <div class="input-group"><input type="text" placeholder="First Name" required></div>
+      <div class="input-group"><input type="text" placeholder="Second Name" required></div>
+      <div class="input-group"><input type="email" placeholder="Email" required></div>
+      <div class="input-group password-box">
+        <input type="password" id="registerPassword" placeholder="Password" required>
+        <span class="toggle-password" onclick="togglePassword('registerPassword')">👁</span>
+      </div>
+      <button class="auth-btn">Create Account</button>
+    </form>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+  // Open modal automatically when page loads
+  window.onload = function() {
+    const modal = document.getElementById('authModal');
+    modal.style.display = 'block';
+    modal.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

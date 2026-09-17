@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karero Comprehensive School - Login / Register</title>
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<a href="#" data-auth-open="register">Login / Register</a>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-overlay" onclick="closeAuth()"></div>
+  <div class="auth-box">
+    <span class="close-auth" onclick="closeAuth()">&times;</span>
+
+    <!-- Tab Buttons -->
+    <div class="auth-switch">
+      <button type="button" class="active" id="loginTab">Login</button>
+      <button type="button" id="registerTab">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="auth-form">
+      <h2>Welcome Back</h2>
+      <div class="input-group">
+        <input type="email" placeholder="Email" required>
+      </div>
+      <div class="input-group password-box">
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <span class="toggle-password" onclick="togglePassword('loginPassword')">👁</span>
+      </div>
+      <div class="auth-options">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="reset-password.html">Forgot password?</a>
+      </div>
+      <button type="submit" class="auth-btn">Login</button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="auth-form hidden">
+      <h2>Create Account</h2>
+      <div class="input-group"><input type="text" placeholder="First Name" required></div>
+      <div class="input-group"><input type="text" placeholder="Second Name" required></div>
+      <div class="input-group"><input type="email" placeholder="Email" required></div>
+      <div class="input-group password-box">
+        <input type="password" id="registerPassword" placeholder="Password" required>
+        <span class="toggle-password" onclick="togglePassword('registerPassword')">👁</span>
+      </div>
+      <p class="terms-text">
+        By registering into our system, you agreed to our
+        <a href="terms-conditions.html" class="terms-link">"terms and conditions"</a>.
+      </p>
+      <button type="submit" class="auth-btn">Create Account</button>
+    </form>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/script.js"></script>
+
+
+
+</body>
+</html>
