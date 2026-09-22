@@ -4,6 +4,7 @@
   "description": "Local test harness to verify admin login in KPS site",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "test-admin": "node tests/test-admin-login.js"
   },
   "devDependencies": {

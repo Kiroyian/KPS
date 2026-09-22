@@ -31,9 +31,45 @@
       <button id="adminLogout" class="btn">Logout</button>
     </div>
 
-    <div class="dashboard-grid">
-      <div class="admin-card admin-panel">
-        <h2>Student Download Requests</h2>
+    <div class="admin-workspace">
+      <aside class="admin-sidebar" aria-label="Admin tools">
+        <div class="admin-sidebar-heading">
+          <span class="admin-sidebar-kicker">Workspace</span>
+          <h2>Admin tools</h2>
+          <p>Choose a workspace to manage school operations.</p>
+        </div>
+        <nav class="admin-tool-nav">
+          <button id="openNoticesModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">!</span>
+            <span><strong>School Notices</strong><small>Publish announcements</small></span>
+          </button>
+          <button id="openTimetableModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">T</span>
+            <span><strong>Class Timetable</strong><small>Build class schedules</small></span>
+          </button>
+          <button id="openFeedbackModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">&#9679;</span>
+            <span><strong>Feedback &amp; Requests</strong><small>Review messages</small></span>
+          </button>
+          <button id="openScheduleModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">&#10003;</span>
+            <span><strong>Duty Schedule</strong><small>View teacher duties</small></span>
+          </button>
+          <button id="openStudentManagementModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">&#43;</span>
+            <span><strong>Manage Students</strong><small>Edit student records</small></span>
+          </button>
+        </nav>
+      </aside>
+
+      <section class="admin-card admin-panel admin-content-panel">
+        <div class="admin-section-heading">
+          <div>
+            <span class="admin-sidebar-kicker">Overview</span>
+            <h2>Student Download Requests</h2>
+          </div>
+          <span class="admin-status-pill">Live records</span>
+        </div>
         <p>Registered students who downloaded or opened school application forms are listed below.</p>
         <div class="table-responsive">
           <table class="admin-table" id="downloadsTable">
@@ -51,50 +87,8 @@
             <tbody></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="admin-card admin-panel admin-summary-card">
-        <h2>School Notices</h2>
-        <p>Edit or publish announcements from a sleek popup workspace.</p>
-        <div class="card-actions">
-          <button id="openNoticesModal" class="btn btn-secondary">Open Notices</button>
-        </div>
-      </div>
-
-      <div class="admin-card admin-panel admin-summary-card">
-        <h2>Class Timetable Manager</h2>
-        <p>Build or edit schedules in a focused popup without clutter.</p>
-        <div class="card-actions">
-          <button id="openTimetableModal" class="btn btn-secondary">Open Timetable</button>
-        </div>
-      </div>
-
-      <div class="admin-card admin-panel admin-summary-card">
-        <h2>Feedback & Requests</h2>
-        <p>Review student and parent messages from the contact form.</p>
-        <div class="card-actions">
-          <button id="openFeedbackModal" class="btn btn-secondary">Open Feedback</button>
-        </div>
-      </div>
-
-      <div class="admin-card admin-panel admin-summary-card">
-        <h2>Teacher Duty Schedule</h2>
-        <p>View teacher assignments in a dedicated popup table.</p>
-        <div class="card-actions">
-          <button id="openScheduleModal" class="btn btn-secondary">View Duty Schedule</button>
-        </div>
-      </div>
+      </section>
     </div>
-
-      <div class="admin-card admin-panel admin-summary-card">
-        <h2>Student Management</h2>
-        <p>Add, view, edit, and delete student records from the school database.</p>
-        <div class="card-actions">
-          <button id="openStudentManagementModal" class="btn btn-secondary">
-            Manage Students
-          </button>
-        </div>
-      </div>
 
     <div class="admin-modal hidden" id="noticeModal" aria-hidden="true">
       <div class="modal-card">
