@@ -1,6 +1,5 @@
 const STORAGE_STUDENTS = 'kareroStudentDownloads';
 const STORAGE_NOTICES = 'kareroSchoolNotices';
-const STORAGE_SCHEDULE = 'kareroClassSchedules';
 const STORAGE_FEEDBACKS = 'kareroContactFeedbacks';
 const STORAGE_ADMIN_AUTH = 'kareroAdminAuthenticated';
 const STORAGE_ADMIN_USER_HASH = 'kareroAdminUserHash';
@@ -19,20 +18,6 @@ const DEFAULT_NOTICES = [
   }
 ];
 
-const DEFAULT_SCHEDULE = [
-  { day: 'Monday', grade: 'PP1', teacher: 'Ms. Amina', subjects: ['Songs', 'Creative Play'], duty: 'Play Area' },
-  { day: 'Monday', grade: 'PP2', teacher: 'Ms. Grace', subjects: ['Story Time', 'Numbers'], duty: 'Play Area' },
-  { day: 'Monday', grade: 'Grade 1', teacher: 'Mr. Otieno', subjects: ['English', 'Math'], duty: 'Classroom 2' },
-  { day: 'Monday', grade: 'Grade 2', teacher: 'Ms. Wairimu', subjects: ['Math', 'Science'], duty: 'Classroom 3' },
-  { day: 'Monday', grade: 'Grade 3', teacher: 'Mr. Kimani', subjects: ['English', 'Social Studies'], duty: 'Classroom 4' },
-  { day: 'Monday', grade: 'Grade 4', teacher: 'Mr. Njoroge', subjects: ['Math', 'Science', 'English'], duty: 'Classroom 5' },
-  { day: 'Monday', grade: 'Grade 5', teacher: 'Ms. Nyambura', subjects: ['English', 'Kiswahili', 'History'], duty: 'Classroom 6' },
-  { day: 'Monday', grade: 'Grade 6', teacher: 'Mr. Mwangi', subjects: ['Math', 'Science', 'Geography'], duty: 'Classroom 7' },
-  { day: 'Monday', grade: 'Grade 7', teacher: 'Ms. Cherono', subjects: ['English', 'Biology', 'ICT'], duty: 'Classroom 8' },
-  { day: 'Monday', grade: 'Grade 8', teacher: 'Mr. Kamau', subjects: ['Math', 'Physics', 'Chemistry'], duty: 'Laboratory' },
-  { day: 'Monday', grade: 'Grade 9', teacher: 'Ms. Wanjiru', subjects: ['English', 'History', 'CRE'], duty: 'Classroom 9' },
-  { day: 'Monday', grade: 'Grade 10', teacher: 'Mr. Ouma', subjects: ['Math', 'Biology', 'English'], duty: 'Classroom 10' }
-];
 
 function loadStorage(key, fallback) {
   try {
@@ -629,52 +614,85 @@ async function initAdminPage() {
   }
 
   if (scheduleForm) {
-    scheduleForm.addEventListener('submit', event => {
-      event.preventDefault();
-      const grade = document.getElementById('scheduleGrade')?.value;
-      const teacher = document.getElementById('scheduleTeacher')?.value.trim();
-      const subjects = document.getElementById('scheduleSubjects')?.value.trim();
-      const day = document.getElementById('scheduleDay')?.value;
-      const duty = document.getElementById('scheduleDuty')?.value.trim();
-      if (!grade || !teacher || !subjects || !day || !duty) {
-        alert('Please complete all timetable fields.');
-        return;
+  scheduleForm.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const grade = document.getElementById('scheduleGrade')?.value;
+    const teacher = document.getElementById('scheduleTeacher')?.value.trim();
+    const subjects = document.getElementById('scheduleSubjects')?.value.trim();
+    const day = document.getElementById('scheduleDay')?.value;
+    const duty = document.getElementById('scheduleDuty')?.value.trim();
+
+    if (!grade || !teacher || !subjects || !day || !duty) {
+      alert('Please complete all timetable fields.');
+      return;
+    }
+
+    const subjectList = subjects
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean);
+
+    if (
+      ['PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3'].includes(grade) &&
+      subjectList.length !== 2
+    ) {
+      alert('Playgroups through Grade 3 must have exactly 2 subjects.');
+      return;
+    }
+
+    if (
+      !['PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3'].includes(grade) &&
+      subjectList.length !== 3
+    ) {
+      alert('Grade 4 through Grade 10 must have exactly 3 subjects.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/timetable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          day,
+          grade,
+          teacher,
+          subjects: subjectList,
+          duty
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to save timetable entry.');
       }
-      const subjectList = subjects.split(',').map(item => item.trim()).filter(Boolean);
-      if (['PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3'].includes(grade) && subjectList.length !== 2) {
-        alert('Playgroups through Grade 3 must have exactly 2 subjects.');
-        return;
-      }
-      if (!['PP1', 'PP2', 'Grade 1', 'Grade 2', 'Grade 3'].includes(grade) && subjectList.length !== 3) {
-        alert('Grade 4 through Grade 10 must have exactly 3 subjects.');
-        return;
-      }
-      const schedule = loadStorage(STORAGE_SCHEDULE, []);
-      schedule.unshift({ day, grade, teacher, subjects: subjectList, duty });
-      saveStorage(STORAGE_SCHEDULE, schedule);
+
       renderSchedule();
       renderTeacherSchedule();
+
       document.getElementById('scheduleForm').reset();
+
       alert('Timetable entry saved successfully.');
-    });
-  }
+
+    } catch (error) {
+      console.error('Error saving timetable entry:', error);
+      alert('Failed to save timetable entry. Please check that the KPS server is running.');
+    }
+  });
+}
 
   function showAdminDashboard() {
     adminLoginPanel.classList.add('hidden');
     adminDashboard.classList.remove('hidden');
     renderStudentDownloads();
     renderAdminNotices(loadStorage(STORAGE_NOTICES, DEFAULT_NOTICES), document.getElementById('adminNoticePreview'), handleEditNotice, handleDeleteNotice);
-    initializeSchedule();
     renderSchedule();
     renderTeacherSchedule();
   }
 
-  function initializeSchedule() {
-    const existing = loadStorage(STORAGE_SCHEDULE, []);
-    if (!existing.length) {
-      saveStorage(STORAGE_SCHEDULE, DEFAULT_SCHEDULE);
-    }
-  }
 }
 
 function renderStudentDownloads() {
@@ -716,55 +734,97 @@ function renderStudentDownloads() {
   });
 }
 
-function renderSchedule() {
+async function renderSchedule() {
   const preview = document.getElementById('schedulePreview');
+
   if (!preview) {
     return;
   }
-  const schedule = loadStorage(STORAGE_SCHEDULE, []);
-  preview.innerHTML = '';
-  if (!schedule.length) {
-    preview.innerHTML = '<p class="page-intro">No timetable entries created yet.</p>';
-    return;
+
+  try {
+    const response = await fetch('/api/timetable');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch timetable.');
+    }
+
+    const schedule = await response.json();
+
+    preview.innerHTML = '';
+
+    if (!schedule.length) {
+      preview.innerHTML = '<p class="page-intro">No timetable entries created yet.</p>';
+      return;
+    }
+
+    const grouped = schedule.slice(0, 10);
+
+    grouped.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'schedule-card';
+
+      card.innerHTML = `
+        <h3>${item.day} — ${item.grade}</h3>
+        <p><strong>Teacher:</strong> ${item.teacher}</p>
+        <p><strong>Subjects:</strong> ${item.subjects.join(', ')}</p>
+        <p><strong>Duty:</strong> ${item.duty}</p>
+      `;
+
+      preview.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error('Error loading timetable:', error);
+    preview.innerHTML =
+      '<p class="page-intro">Unable to load timetable entries.</p>';
   }
-  const grouped = schedule.slice(0, 10);
-  grouped.forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'schedule-card';
-    card.innerHTML = `
-      <h3>${item.day} — ${item.grade}</h3>
-      <p><strong>Teacher:</strong> ${item.teacher}</p>
-      <p><strong>Subjects:</strong> ${item.subjects.join(', ')}</p>
-      <p><strong>Duty:</strong> ${item.duty}</p>
-    `;
-    preview.appendChild(card);
-  });
 }
 
-function renderTeacherSchedule() {
+async function renderTeacherSchedule() {
   const tableBody = document.querySelector('#teacherScheduleTable tbody');
+
   if (!tableBody) {
     return;
   }
-  const schedule = loadStorage(STORAGE_SCHEDULE, []);
-  tableBody.innerHTML = '';
-  if (!schedule.length) {
-    const row = document.createElement('tr');
-    row.innerHTML = '<td colspan="5">No teacher duty entries available.</td>';
-    tableBody.appendChild(row);
-    return;
+
+  try {
+    const response = await fetch('/api/timetable');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch teacher schedule.');
+    }
+
+    const schedule = await response.json();
+
+    tableBody.innerHTML = '';
+
+    if (!schedule.length) {
+      const row = document.createElement('tr');
+      row.innerHTML = '<td colspan="5">No teacher duty entries available.</td>';
+      tableBody.appendChild(row);
+      return;
+    }
+
+    schedule.slice(0, 12).forEach(entry => {
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${entry.day}</td>
+        <td>${entry.grade}</td>
+        <td>${entry.teacher}</td>
+        <td>${entry.subjects.join(', ')}</td>
+        <td>${entry.duty}</td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+
+  } catch (error) {
+    console.error('Error loading teacher schedule:', error);
+
+    tableBody.innerHTML =
+      '<tr><td colspan="5">Unable to load teacher duty entries.</td></tr>';
   }
-  schedule.slice(0, 12).forEach(entry => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${entry.day}</td>
-      <td>${entry.grade}</td>
-      <td>${entry.teacher}</td>
-      <td>${entry.subjects.join(', ')}</td>
-      <td>${entry.duty}</td>
-    `;
-    tableBody.appendChild(row);
-  });
 }
 
 function initPage() {
