@@ -1,5 +1,25 @@
 const express = require("express");
 
+const REQUIRED_ADMISSION_REQUIREMENTS = [
+    "applicationForm",
+    "birthCertificate",
+    "guardianId",
+    "passportPhotos"
+];
+const OPTIONAL_ADMISSION_REQUIREMENTS = [
+    "previousSchoolReport",
+    "medicalInformation"
+];
+const ALL_ADMISSION_REQUIREMENTS = [
+    ...REQUIRED_ADMISSION_REQUIREMENTS,
+    ...OPTIONAL_ADMISSION_REQUIREMENTS
+];
+
+function isAdmissionChecklistComplete(requirements) {
+    return REQUIRED_ADMISSION_REQUIREMENTS.every(key => requirements[key] === "verified") &&
+        OPTIONAL_ADMISSION_REQUIREMENTS.every(key => ["verified", "notApplicable"].includes(requirements[key]));
+}
+
 function createStudentRoutes(db) {
     const router = express.Router();
 
@@ -18,6 +38,161 @@ function createStudentRoutes(db) {
             res.status(500).json({
                 success: false,
                 message: "Failed to fetch students"
+            });
+        }
+    });
+
+    router.patch("/:id/admission-status", async (req, res) => {
+        try {
+            const { ObjectId } = require("mongodb");
+            const { admissionStatus } = req.body;
+
+            if (!ObjectId.isValid(req.params.id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid student ID"
+                });
+            }
+
+            if (!["Admitted", "Waiting approval"].includes(admissionStatus)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Admission status must be Admitted or Waiting approval"
+                });
+            }
+
+            const studentId = new ObjectId(req.params.id);
+            const existingStudent = await db
+                .collection("students")
+                .findOne({ _id: studentId });
+
+            if (!existingStudent) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found"
+                });
+            }
+
+            if (admissionStatus === "Admitted" &&
+                !isAdmissionChecklistComplete(existingStudent.admissionRequirements || {})) {
+                return res.status(409).json({
+                    success: false,
+                    message: "Verify all admission requirements before admitting this student"
+                });
+            }
+
+            const result = await db
+                .collection("students")
+                .updateOne(
+                    { _id: studentId },
+                    { $set: { admissionStatus } }
+                );
+
+            if (result.matchedCount === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found"
+                });
+            }
+
+            const student = await db
+                .collection("students")
+                .findOne({ _id: studentId });
+
+            res.json({
+                success: true,
+                message: "Admission status updated successfully",
+                student
+            });
+        } catch (error) {
+            console.error("Error updating admission status:", error);
+
+            res.status(500).json({
+                success: false,
+                message: "Failed to update admission status"
+            });
+        }
+    });
+
+    router.patch("/:id/admission-review", async (req, res) => {
+        try {
+            const { ObjectId } = require("mongodb");
+            const { admissionRequirements, admissionStatus } = req.body;
+
+            if (!ObjectId.isValid(req.params.id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid student ID"
+                });
+            }
+
+            if (!admissionRequirements || typeof admissionRequirements !== "object" ||
+                Array.isArray(admissionRequirements) ||
+                ALL_ADMISSION_REQUIREMENTS.some(key => !["pending", "verified", "notApplicable"].includes(admissionRequirements[key])) ||
+                Object.keys(admissionRequirements).some(key => !ALL_ADMISSION_REQUIREMENTS.includes(key)) ||
+                REQUIRED_ADMISSION_REQUIREMENTS.some(key => admissionRequirements[key] === "notApplicable")) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Provide a valid status for every admission requirement"
+                });
+            }
+
+            if (admissionStatus !== undefined && !["Admitted", "Waiting approval"].includes(admissionStatus)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Admission status must be Admitted or Waiting approval"
+                });
+            }
+
+            const studentId = new ObjectId(req.params.id);
+            const existingStudent = await db
+                .collection("students")
+                .findOne({ _id: studentId });
+
+            if (!existingStudent) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found"
+                });
+            }
+
+            if ((admissionStatus === "Admitted" ||
+                (admissionStatus === undefined && existingStudent.admissionStatus === "Admitted")) &&
+                !isAdmissionChecklistComplete(admissionRequirements)) {
+                return res.status(409).json({
+                    success: false,
+                    message: "Verify all admission requirements before admitting this student"
+                });
+            }
+
+            const update = {
+                admissionRequirements,
+                admissionRequirementsUpdatedAt: new Date().toISOString()
+            };
+            if (admissionStatus !== undefined) {
+                update.admissionStatus = admissionStatus;
+            }
+
+            await db.collection("students").updateOne(
+                { _id: studentId },
+                { $set: update }
+            );
+
+            const student = await db
+                .collection("students")
+                .findOne({ _id: studentId });
+
+            res.json({
+                success: true,
+                message: "Admission review saved successfully",
+                student
+            });
+        } catch (error) {
+            console.error("Error saving admission review:", error);
+
+            res.status(500).json({
+                success: false,
+                message: "Failed to save admission review"
             });
         }
     });

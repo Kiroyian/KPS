@@ -4,6 +4,18 @@ const STORAGE_FEEDBACKS = 'kareroContactFeedbacks';
 const STORAGE_ADMIN_AUTH = 'kareroAdminAuthenticated';
 const STORAGE_ADMIN_USER_HASH = 'kareroAdminUserHash';
 const STORAGE_ADMIN_PASS_HASH = 'kareroAdminPassHash';
+const ADMIN_STUDENTS_API = 'http://localhost:3000/api/students';
+const ADMISSION_REQUIREMENT_DEFINITIONS = [
+  { key: 'applicationForm', label: 'Completed admission application form' },
+  { key: 'birthCertificate', label: 'Copy of the learner\'s birth certificate' },
+  { key: 'guardianId', label: 'Copy of parent or guardian national ID' },
+  { key: 'previousSchoolReport', label: 'Previous school report or transfer letter', optional: true },
+  { key: 'passportPhotos', label: 'Two recent passport-size photos' },
+  { key: 'medicalInformation', label: 'Relevant medical information', optional: true }
+];
+
+let currentAdmissionStudents = [];
+let activeAdmissionStudent = null;
 
 const DEFAULT_NOTICES = [
   {
@@ -437,6 +449,10 @@ async function initAdminPage() {
   const timetableModal = document.getElementById('timetableModal');
   const scheduleModal = document.getElementById('scheduleModal');
   const feedbackModal = document.getElementById('feedbackModal');
+  const admissionReviewModal = document.getElementById('admissionReviewModal');
+  const admissionReviewForm = document.getElementById('admissionReviewForm');
+  const confirmAdmissionButton = document.getElementById('confirmAdmissionButton');
+  const returnToWaitingButton = document.getElementById('returnToWaitingButton');
   const openNoticesButton = document.getElementById('openNoticesModal');
   const openTimetableButton = document.getElementById('openTimetableModal');
   const openScheduleButton = document.getElementById('openScheduleModal');
@@ -583,7 +599,33 @@ async function initAdminPage() {
       if (target === 'timetableModal') closeModal(timetableModal);
       if (target === 'feedbackModal') closeModal(feedbackModal);
       if (target === 'scheduleModal') closeModal(scheduleModal);
+      if (target === 'admissionReviewModal') closeModal(admissionReviewModal);
     });
+  });
+
+  document.getElementById('admissionGroups')?.addEventListener('click', event => {
+    const reviewButton = event.target.closest('[data-review-student]');
+    if (!reviewButton) {
+      return;
+    }
+    const student = currentAdmissionStudents.find(item => item._id === reviewButton.dataset.reviewStudent);
+    if (student) {
+      populateAdmissionReview(student);
+      openModal(admissionReviewModal);
+    }
+  });
+
+  admissionReviewForm?.addEventListener('submit', event => {
+    event.preventDefault();
+    saveAdmissionReview(false);
+  });
+
+  confirmAdmissionButton?.addEventListener('click', () => saveAdmissionReview(true));
+
+  returnToWaitingButton?.addEventListener('click', () => {
+    if (activeAdmissionStudent) {
+      changeStudentAdmissionStatus(activeAdmissionStudent._id, 'Waiting approval', returnToWaitingButton);
+    }
   });
 
   if (noticeForm) {
@@ -695,43 +737,259 @@ async function initAdminPage() {
 
 }
 
-function renderStudentDownloads() {
-  const tableBody = document.querySelector('#downloadsTable tbody');
-  if (!tableBody) {
+async function renderStudentDownloads() {
+  const waitingList = document.getElementById('waitingApprovalList');
+  const admittedList = document.getElementById('admittedList');
+  if (!waitingList || !admittedList) {
     return;
   }
-  const records = loadStorage(STORAGE_STUDENTS, []);
-  tableBody.innerHTML = '';
-  if (!records.length) {
-    const row = document.createElement('tr');
-    row.innerHTML = '<td colspan="7">No student download records yet.</td>';
-    tableBody.appendChild(row);
-    return;
+  waitingList.innerHTML = '<p class="admission-empty">Loading students...</p>';
+  admittedList.replaceChildren();
+  document.getElementById('waitingApprovalCount').textContent = '0';
+  document.getElementById('admittedCount').textContent = '0';
+  document.getElementById('admissionTotalCount').textContent = 'Loading students...';
+
+  try {
+    const response = await fetch(ADMIN_STUDENTS_API);
+    const students = await response.json();
+    if (!response.ok) {
+      throw new Error(students.message || 'Failed to load students.');
+    }
+    if (!Array.isArray(students)) {
+      throw new Error('The students API returned an invalid response.');
+    }
+
+    currentAdmissionStudents = students;
+    const waitingStudents = students.filter(student => student.admissionStatus !== 'Admitted');
+    const admittedStudents = students.filter(student => student.admissionStatus === 'Admitted');
+    waitingList.replaceChildren(...waitingStudents.map(student => createAdmissionCard(student, false)));
+    admittedList.replaceChildren(...admittedStudents.map(student => createAdmissionCard(student, true)));
+    document.getElementById('waitingApprovalCount').textContent = waitingStudents.length;
+    document.getElementById('admittedCount').textContent = admittedStudents.length;
+    document.getElementById('admissionTotalCount').textContent = `${students.length} ${students.length === 1 ? 'student' : 'students'}`;
+
+    if (!waitingStudents.length) {
+      waitingList.innerHTML = '<p class="admission-empty">No students waiting for approval.</p>';
+    }
+    if (!admittedStudents.length) {
+      admittedList.innerHTML = '<p class="admission-empty">No students admitted yet.</p>';
+    }
+  } catch (error) {
+    console.error('Error loading admission records:', error);
+    waitingList.innerHTML = '<p class="admission-empty">Unable to load students from the KPS server.</p>';
+    admittedList.replaceChildren();
+    document.getElementById('waitingApprovalCount').textContent = '0';
+    document.getElementById('admittedCount').textContent = '0';
+    document.getElementById('admissionTotalCount').textContent = 'Unavailable';
   }
-  records.forEach((record, index) => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${record.studentName}</td>
-      <td>${record.className}</td>
-      <td>${record.email}</td>
-      <td>${record.form}</td>
-      <td>${record.action}</td>
-      <td>${record.status === 'Submitted' ? 'Submitted' : `<button class="btn btn-secondary admin-submit" data-index="${index}">Mark Submitted</button>`}</td>
-      <td>${record.time}</td>
-    `;
-    tableBody.appendChild(row);
-  });
-  tableBody.querySelectorAll('.admin-submit').forEach(button => {
-    button.addEventListener('click', () => {
-      const index = Number(button.dataset.index);
-      const records = loadStorage(STORAGE_STUDENTS, []);
-      if (records[index]) {
-        records[index].status = 'Submitted';
-        saveStorage(STORAGE_STUDENTS, records);
-        renderStudentDownloads();
-      }
+}
+
+function createAdmissionCard(student, admitted) {
+  const card = document.createElement('article');
+  card.className = 'admission-student-card';
+
+  const identity = document.createElement('div');
+  identity.className = 'admission-student-identity';
+
+  const name = document.createElement('h4');
+  name.textContent = student.name;
+  identity.appendChild(name);
+
+  const details = document.createElement('p');
+  details.textContent = [
+    student.class || 'Class not provided',
+    student.admissionNo ? `Admission No. ${student.admissionNo}` : ''
+  ].filter(Boolean).join(' / ');
+  identity.appendChild(details);
+
+  const action = document.createElement('button');
+  action.type = 'button';
+  action.className = 'admission-action admission-action--secondary';
+  action.dataset.reviewStudent = student._id;
+  action.textContent = admitted ? 'Review details' : 'Review requirements';
+
+  const actions = document.createElement('div');
+  actions.className = 'admission-student-actions';
+  actions.appendChild(action);
+
+  if (admitted) {
+    const returnButton = document.createElement('button');
+    returnButton.type = 'button';
+    returnButton.className = 'admission-action admission-action--quiet';
+    returnButton.textContent = 'Move to waiting';
+    returnButton.addEventListener('click', () => {
+      changeStudentAdmissionStatus(student._id, 'Waiting approval', returnButton);
     });
+    actions.appendChild(returnButton);
+  }
+
+  card.append(identity, actions);
+  return card;
+}
+
+function populateAdmissionReview(student) {
+  activeAdmissionStudent = student;
+  const details = document.getElementById('admissionStudentDetails');
+  const requirementsList = document.getElementById('admissionRequirementsList');
+  const message = document.getElementById('admissionReviewMessage');
+  const saveButton = document.getElementById('saveAdmissionReview');
+  const confirmButton = document.getElementById('confirmAdmissionButton');
+  const returnButton = document.getElementById('returnToWaitingButton');
+  const isAdmitted = student.admissionStatus === 'Admitted';
+
+  details.replaceChildren();
+  [
+    ['Student name', student.name],
+    ['Admission number', student.admissionNo || 'Not assigned'],
+    ['Class', student.class],
+    ['Gender', student.gender],
+    ['Age', student.age],
+    ['Registered', student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 'Date not recorded']
+  ].forEach(([label, value]) => {
+    const term = document.createElement('dt');
+    term.textContent = label;
+    const description = document.createElement('dd');
+    description.textContent = value || 'Not provided';
+    details.append(term, description);
   });
+
+  const requirements = student.admissionRequirements || {};
+  requirementsList.replaceChildren(...ADMISSION_REQUIREMENT_DEFINITIONS.map(requirement => {
+    const label = document.createElement('label');
+    label.className = 'admission-requirement-item';
+
+    const copy = document.createElement('span');
+    copy.className = 'admission-requirement-copy';
+    copy.textContent = requirement.label;
+
+    const select = document.createElement('select');
+    select.name = requirement.key;
+    select.setAttribute('aria-label', requirement.label);
+    select.disabled = isAdmitted;
+    const options = [
+      ['pending', 'Not checked'],
+      ['verified', 'Received and verified']
+    ];
+    if (requirement.optional) {
+      options.push(['notApplicable', 'Not applicable']);
+    }
+    options.forEach(([value, text]) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      select.appendChild(option);
+    });
+    select.value = options.some(([value]) => value === requirements[requirement.key])
+      ? requirements[requirement.key]
+      : 'pending';
+    select.addEventListener('change', updateAdmissionReviewControls);
+
+    label.append(copy, select);
+    return label;
+  }));
+
+  message.textContent = isAdmitted ? 'This student has been admitted.' : 'All required items must be verified before admission.';
+  saveButton.classList.toggle('hidden', isAdmitted);
+  confirmButton.classList.toggle('hidden', isAdmitted);
+  returnButton.classList.toggle('hidden', !isAdmitted);
+  updateAdmissionReviewControls();
+}
+
+function getAdmissionRequirementsFromForm() {
+  return Object.fromEntries(ADMISSION_REQUIREMENT_DEFINITIONS.map(requirement => [
+    requirement.key,
+    document.querySelector(`#admissionRequirementsList [name="${requirement.key}"]`)?.value || 'pending'
+  ]));
+}
+
+function isAdmissionReviewComplete(requirements) {
+  return ADMISSION_REQUIREMENT_DEFINITIONS.every(requirement =>
+    requirements[requirement.key] === 'verified' ||
+    (requirement.optional && requirements[requirement.key] === 'notApplicable')
+  );
+}
+
+function updateAdmissionReviewControls() {
+  const requirements = getAdmissionRequirementsFromForm();
+  const confirmButton = document.getElementById('confirmAdmissionButton');
+  if (confirmButton && activeAdmissionStudent?.admissionStatus !== 'Admitted') {
+    confirmButton.disabled = !isAdmissionReviewComplete(requirements);
+  }
+}
+
+async function saveAdmissionReview(admitStudent) {
+  if (!activeAdmissionStudent) {
+    return;
+  }
+
+  const requirements = getAdmissionRequirementsFromForm();
+  const message = document.getElementById('admissionReviewMessage');
+  const saveButton = document.getElementById('saveAdmissionReview');
+  const confirmButton = document.getElementById('confirmAdmissionButton');
+  if (admitStudent && !isAdmissionReviewComplete(requirements)) {
+    message.textContent = 'Verify all required items before admitting this student.';
+    return;
+  }
+
+  saveButton.disabled = true;
+  confirmButton.disabled = true;
+  message.textContent = admitStudent ? 'Saving admission decision...' : 'Saving checklist...';
+  const body = { admissionRequirements: requirements };
+  if (admitStudent) {
+    body.admissionStatus = 'Admitted';
+  }
+
+  try {
+    const response = await fetch(`${ADMIN_STUDENTS_API}/${encodeURIComponent(activeAdmissionStudent._id)}/admission-review`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to save admission review.');
+    }
+
+    if (admitStudent) {
+      document.getElementById('admissionReviewModal').classList.add('hidden');
+      document.getElementById('admissionReviewModal').setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      activeAdmissionStudent = null;
+    } else {
+      populateAdmissionReview(result.student);
+      message.textContent = 'Checklist saved. The admission decision is still pending.';
+    }
+    await renderStudentDownloads();
+  } catch (error) {
+    console.error('Error saving admission review:', error);
+    message.textContent = error.message || 'Unable to save the admission review.';
+  } finally {
+    saveButton.disabled = false;
+    updateAdmissionReviewControls();
+  }
+}
+
+async function changeStudentAdmissionStatus(studentId, admissionStatus, button) {
+  const originalLabel = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Saving...';
+  try {
+    const response = await fetch(`${ADMIN_STUDENTS_API}/${encodeURIComponent(studentId)}/admission-status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admissionStatus })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to update admission status.');
+    }
+    await renderStudentDownloads();
+  } catch (error) {
+    console.error('Error updating admission status:', error);
+    button.disabled = false;
+    button.textContent = originalLabel;
+    alert(error.message || 'Unable to update the admission status.');
+  }
 }
 
 async function renderSchedule() {

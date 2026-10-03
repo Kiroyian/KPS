@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - Karero Comprehensive School</title>
+  <link rel="icon" type="image/svg+xml" href="image/school-logo.svg">
   <link rel="stylesheet" href="css/main.css?v=admin-theme-2">
 </head>
 <body>
@@ -66,28 +67,53 @@
         <div class="admin-section-heading">
           <div>
             <span class="admin-sidebar-kicker">Overview</span>
-            <h2>Student Download Requests</h2>
+            <h2>Student Admissions</h2>
           </div>
-          <span class="admin-status-pill">Live records</span>
+          <span class="admin-status-pill" id="admissionTotalCount">0 students</span>
         </div>
-        <p>Registered students who downloaded or opened school application forms are listed below.</p>
-        <div class="table-responsive">
-          <table class="admin-table" id="downloadsTable">
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Class</th>
-                <th>Email</th>
-                <th>Form</th>
-                <th>Action</th>
-                <th>Submitted</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+        <p>Students without a recorded admission decision appear under Waiting approval.</p>
+        <div class="admission-groups" id="admissionGroups">
+          <section class="admission-group" aria-labelledby="waitingApprovalHeading">
+            <div class="admission-group-heading">
+              <h3 id="waitingApprovalHeading">Waiting approval</h3>
+              <span class="admission-count" id="waitingApprovalCount">0</span>
+            </div>
+            <div class="admission-list" id="waitingApprovalList"></div>
+          </section>
+          <section class="admission-group" aria-labelledby="admittedHeading">
+            <div class="admission-group-heading">
+              <h3 id="admittedHeading">Admitted</h3>
+              <span class="admission-count" id="admittedCount">0</span>
+            </div>
+            <div class="admission-list" id="admittedList"></div>
+          </section>
         </div>
       </section>
+    </div>
+
+    <div class="admin-modal hidden" id="admissionReviewModal" aria-hidden="true">
+      <div class="modal-card modal-card--wide">
+        <div class="modal-header">
+          <div>
+            <h2>Admission review</h2>
+            <p>Review the student record and confirm each admission requirement before approval.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="admissionReviewModal" aria-label="Close admission review">×</button>
+        </div>
+        <dl class="admission-student-details" id="admissionStudentDetails"></dl>
+        <form id="admissionReviewForm" class="admission-review-form">
+          <fieldset>
+            <legend>Requirements</legend>
+            <div class="admission-requirement-list" id="admissionRequirementsList"></div>
+          </fieldset>
+          <p class="admission-review-message" id="admissionReviewMessage" role="status" aria-live="polite"></p>
+          <div class="modal-form-actions">
+            <button type="submit" id="saveAdmissionReview" class="btn btn-secondary">Save checklist</button>
+            <button type="button" id="confirmAdmissionButton" class="admission-action" disabled>Admit student</button>
+            <button type="button" id="returnToWaitingButton" class="btn btn-outline hidden">Move to waiting</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div class="admin-modal hidden" id="noticeModal" aria-hidden="true">

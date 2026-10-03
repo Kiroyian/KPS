@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const createStudentRoutes = require("./routes/studentRoutes");
 const createTimetableRoutes = require("./routes/timetableRoutes");
+const createFeedbackRoutes = require("./routes/feedbackRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -43,6 +44,7 @@ async function startServer() {
 
         app.use("/api/students", createStudentRoutes(db));
         app.use("/api/timetable", createTimetableRoutes(db));
+        app.use("/api/feedback", createFeedbackRoutes(db));
         console.log("Connected to MongoDB");
         console.log(`Database: ${DB_NAME}`);
 

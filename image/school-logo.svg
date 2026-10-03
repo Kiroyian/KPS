@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Sample school crest</title>
+  <path fill="#f2c94c" d="M64 4 112 22v36c0 31-19 52-48 66C35 110 16 89 16 58V22z"/>
+  <path fill="#0d6efd" d="M64 11 105 26v32c0 26-15 44-41 57C38 102 23 84 23 58V26z"/>
+  <path fill="#fff" d="M64 34c-12-9-24-10-35-7v39c11-3 23-2 35 7 12-9 24-10 35-7V27c-11-3-23-2-35 7z"/>
+  <path fill="none" stroke="#0d6efd" stroke-linecap="round" stroke-width="3" d="M64 36v35M35 36c9-1 17 1 25 6m33-6c-9-1-17 1-25 6M35 48c9-1 17 1 25 6m33-6c-9-1-17 1-25 6"/>
+  <path fill="#45a66b" d="M64 20 68 27l8 1-6 6 1 8-7-4-7 4 1-8-6-6 8-1z"/>
+  <path fill="#f2c94c" d="M39 86h50l-5 10H44z"/>
+</svg>
