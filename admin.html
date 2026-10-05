@@ -60,6 +60,15 @@
             <span class="admin-tool-icon" aria-hidden="true">&#43;</span>
             <span><strong>Manage Students</strong><small>Edit student records</small></span>
           </button>
+          <button id="openTeacherManagementModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">&#43;</span>
+            <span><strong>Manage Teachers</strong><small>Edit teacher records</small></span>
+          </button>
+
+          <button id="openTeacherAssignmentModal" class="admin-tool-link" type="button">
+            <span class="admin-tool-icon" aria-hidden="true">&#43;</span>
+            <span><strong>Manage Teacher Assignments</strong><small>Edit teacher assignments</small></span>
+          </button>
         </nav>
       </aside>
 
@@ -290,6 +299,215 @@
       </div>
     </div>
 
+    <div class="admin-modal hidden" id="teacherManagementModal" aria-hidden="true">
+      <div class="modal-card modal-card--wide">
+        <div class="modal-header">
+          <div>
+            <h2>Teacher Management</h2>
+            <p>Manage teacher records stored in the school database.</p>
+          </div>
+          <button type="button" class="modal-close" data-modal="teacherManagementModal">×</button>
+        </div>
+
+        <div class="teacher-management-actions">
+          <button type="button" id="addTeacherButton" class="btn btn-secondary">
+            Add Teacher
+          </button>
+        </div>
+
+        <div id="teacherFormContainer" class="hidden">
+          <form id="teacherForm" class="admin-form modal-form">
+
+            <input type="hidden" id="teacherId">
+
+            <input
+              type="text"
+              id="teacherName"
+              placeholder="Teacher name"
+              required
+            >
+
+            <input
+              type="text"
+              id="teacherEmployeeNo"
+              placeholder="Employee number"
+              required
+            >
+
+            <input
+              type="text"
+              id="teacherSubject"
+              placeholder="Subject taught"
+              required
+            >
+
+            <select id="teacherClass" required>
+              <option value="">Select class</option>
+              <option value="Grade 1">Grade 1</option>
+              <option value="Grade 2">Grade 2</option>
+              <option value="Grade 3">Grade 3</option>
+              <option value="Grade 4">Grade 4</option>
+              <option value="Grade 5">Grade 5</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+            </select>
+
+            <div class="modal-form-actions">
+              <button type="submit" id="saveTeacherButton" class="btn btn-secondary">
+                Save Teacher
+              </button>
+
+              <button type="button" id="cancelTeacherButton" class="btn btn-outline">
+                Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table" id="teachersManagementTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Employee No</th>
+                <th>Subject</th>
+                <th>Grade</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teacher Assignment Modal -->
+<div class="admin-modal hidden" id="teacherAssignmentModal" aria-hidden="true">
+  <div class="modal-card modal-card--wide">
+
+    <div class="modal-header">
+      <div>
+        <h2>Teacher Assignment</h2>
+        <p>Assign teachers to classes and subjects.</p>
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        data-modal="teacherAssignmentModal"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- Assignment Actions -->
+    <div class="teacher-management-actions">
+      <button
+        type="button"
+        id="addTeacherAssignmentButton"
+        class="btn btn-secondary"
+      >
+        Add Assignment
+      </button>
+    </div>
+
+    <!-- Assignment Form -->
+    <div id="teacherAssignmentFormContainer" class="hidden">
+
+      <form id="teacherAssignmentForm" class="admin-form modal-form">
+
+        <input type="hidden" id="teacherAssignmentId">
+
+        <!-- Teacher -->
+        <label for="assignmentTeacher">
+          Teacher
+        </label>
+
+        <select id="assignmentTeacher" required>
+          <option value="">Select teacher</option>
+        </select>
+
+        <!-- Class -->
+        <label for="assignmentClass">
+          Class
+        </label>
+
+        <select id="assignmentClass" required>
+          <option value="">Select class</option>
+          <option value="Grade 1">Grade 1</option>
+          <option value="Grade 2">Grade 2</option>
+          <option value="Grade 3">Grade 3</option>
+          <option value="Grade 4">Grade 4</option>
+          <option value="Grade 5">Grade 5</option>
+          <option value="Grade 6">Grade 6</option>
+          <option value="Grade 7">Grade 7</option>
+          <option value="Grade 8">Grade 8</option>
+          <option value="Grade 9">Grade 9</option>
+        </select>
+
+        <!-- Subject -->
+        <label for="assignmentSubject">
+          Subject
+        </label>
+
+        <input
+          type="text"
+          id="assignmentSubject"
+          placeholder="Subject"
+          required
+        >
+
+        <div class="modal-form-actions">
+
+          <button
+            type="submit"
+            id="saveTeacherAssignmentButton"
+            class="btn btn-secondary"
+          >
+            Save Assignment
+          </button>
+
+          <button
+            type="button"
+            id="cancelTeacherAssignmentButton"
+            class="btn btn-outline"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Assignment Table -->
+    <div class="table-responsive">
+
+      <table class="admin-table" id="teacherAssignmentsTable">
+
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>Employee No</th>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+</div>
+
     <div class="admin-modal hidden" id="scheduleModal" aria-hidden="true">
       <div class="modal-card modal-card--wide">
         <div class="modal-header">
@@ -320,6 +538,8 @@
 
 <script src="js/script.js"></script>
 <script src="js/students.js"></script>
+<script src="js/teachers.js"></script>
+<script src="js/teacherAssignments.js"></script>
 </body>
 </html>
 
